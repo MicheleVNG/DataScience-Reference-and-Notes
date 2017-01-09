@@ -1,0 +1,142 @@
+# Week 1
+
+## Lesson 1: Graphs
+
+### Principles of Analytic Graphics
+
+1. **Show comparisons** - *"compared to what?"* If there's nothing to compare, it's useful to compare the presence of something to the absence of that thing.
+2. **Show causality, mechanism, explanation, systematic structure** - you can show multiple graphs to suggest an underlining idea
+3. **Show multivariate data** - the real world is made of more than two varibles. Try to show the relevant ones (more than 2!)
+4. **Integrate evidence** - don't let the tool drive the analysis, integrate the data you need.
+5. **Describe and document the evidence**
+6. Ultimately, it's the **content that matters**, you need to have an interesting and relevant story to tell
+
+### Exploratory Graphs
+
+It's useful to use graphs as a tool to *understand* data: find patterns, suggest models, set the basis for further analysis.
+
+The goal is to have a *personal understanding* of the data, not to show someone else. So you usually make a large number, very quickly.
+
+**Example with an Air Pollution dataset.**
+
+```{r}
+# Load sample data
+pollution <- read.csv("data/avgpm25.csv", colClasses = c("numeric", "character", "factor", "numeric", "numeric"))
+```
+
+**Q**: Are there any counties in the U.S. that exceed the national standard of 12 µg/m3 for fine particle pollution?
+
+*Always have a question about your data, even a vague background one.*
+
+#### One-dimension summary of data
+
+**Five Number Summary**
+
+It's not really a plot, but still worth mentioning.
+
+```{r}
+summary(pollution$pm25)
+```
+
+**Boxplot**
+
+Represents the data median, 1st and 3rd quartiles, and long tail values.
+
+```{r}
+boxplot(pollution$pm25, col = "blue")
+```
+
+**Histogram**
+
+It gives more information about the shape of the distribution.
+
+```{r}
+hist(pollution$pm25, col = "green")
+rug(pollution$pm25)
+```
+
+The `rug()` function gives a little bit more detail about the individual observations that make the histogram.
+
+It's useful to play with the `breaks` argument to find a meaningful representation.
+
+**Overlaying Features**
+
+Used to highlight specific points of interest.
+
+```{r}
+boxplot(pollution$pm25, col = "blue")
+abline(h = 12)
+
+hist(pollution$pm25, col = "green")
+abline(v = 12, lwd = 2)
+abline(v = median(pollution$pm25), col = "magenta", lwd = 4)
+```
+
+**Barplot**
+
+Graph useful for *categorical data*.
+
+```{r}
+barplot(table(pollution$region), col = "wheat", main = "Number of Counties in Each Region")
+```
+
+#### Two (and more) dimensions
+
+**General ideas**
+
+Two dimensions:
+
+* Groups / overlayed 1-dimensional plots
+* Scatterplots
+* Smooth scatterplots
+
+More than two dimensions:
+
+* Groups / overlayed 2D plots
+* Use color, size, shape as new dimensions
+* Spinning plots
+* 3D plots (usually not interesting)
+
+**Multiple Boxplots**
+
+Useful to compare a numeric variable (i.e. `pm25`) vs. a categorical one (i.e. `region`)
+
+```{r}
+barplot(pm25 ~ region, data = pollution, col = "red")
+```
+
+**Multiple Histograms**
+
+Same concept (numeric vs. categorical variables), but using histograms.
+
+```{r}
+par(mfrow = c(2, 1), mar = c(4, 4, 2, 1))
+hist(subset(pollution, region == "east")$pm25, col = "green")
+hist(subset(pollution, region == "west")$pm25, col = "green")
+# Code looks less obvious, hard to understand
+```
+
+**Scatterplot**
+
+Obvious representation for two-dimensional data. It's useful to place reference values (i.e. the national average).
+
+Color can be used to display categorical variables.
+
+```{r}
+with(pollution, plot(latitude, pm25, col = region))
+abline(h = 12, lwd = 2, lty = 2)
+```
+
+**Multiple Scatterplots**
+
+Alternative to represent categorical differences in data. Could be more meaningful depending on the data.
+
+```{r}
+par(mfrow = c(1, 2), mar = c(5, 4, 2, 1))
+with(subset(pollution, region == "west"), plot(latitude, pm25, main = "West"))
+with(subset(pollution, region == "east"), plot(latitude, pm25, main = "East"))
+```
+
+#### Summary
+
+Exploratory plots are quick and dirty. They let you summarize the data quickly and graphically (easy to understand), and to formulate the first basic hypotheses to be explored later on in the analysis.
