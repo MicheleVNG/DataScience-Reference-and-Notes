@@ -16,3 +16,5 @@ Since 27th November 2016 I'm enrolled in the [Data Science Specialization](https
 * Practical Machine Learning
 * Developing Data Products
 * Data Science Capstone
+
+I will follow the [Coursera honor code](https://learner.coursera.help/hc/en-us/articles/209818863-Coursera-Honor-Code) in this repo, so I won't explicitly share solutions to homework, quizzes, or exams, and also I won't share the full transcripts or videos of the lessons. Please feel free to (contact me)[https://twitter.com/michelevng] if you think I'm sharing too much.
