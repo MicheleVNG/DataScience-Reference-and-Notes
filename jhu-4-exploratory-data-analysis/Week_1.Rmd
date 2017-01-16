@@ -1,5 +1,19 @@
 # Week 1
 
+<!-- MarkdownTOC depth=3 -->
+
+- [Lesson 1: Graphs](#lesson-1-graphs)
+	- [Principles of Analytic Graphics](#principles-of-analytic-graphics)
+	- [Exploratory Graphs](#exploratory-graphs)
+		- [One-dimension summary of data](#one-dimension-summary-of-data)
+		- [Two \(and more\) dimensions](#two-and-more-dimensions)
+		- [Summary](#summary)
+- [Lesson 2: Plotting](#lesson-2-plotting)
+
+<!-- /MarkdownTOC -->
+
+
+
 ## Lesson 1: Graphs
 
 ### Principles of Analytic Graphics
@@ -140,3 +154,146 @@ with(subset(pollution, region == "east"), plot(latitude, pm25, main = "East"))
 #### Summary
 
 Exploratory plots are quick and dirty. They let you summarize the data quickly and graphically (easy to understand), and to formulate the first basic hypotheses to be explored later on in the analysis.
+
+## Lesson 2: Plotting
+
+### Plotting systems in R
+
+There are 3 different plotting systems in R.
+
+* Base plotting system  
+   Idea: you add things to the graph one by one.  
+   *"Artist's palette" model*
+	- Generation vs. Annotation
+	- Convenient, but you can't go back (it's an accumulative process)
+	- There's no "language", it's just a series of R commands
+* Lattice system  
+   *Entire plot specified by one function; conditioning*
+	- Construct an entire plot all at once 
+	- Useful for "conditional" plots (looking at x and y across levels of z), also called "panel" plots
+	- Good to create a lot of plots at once
+* ggplot2 system
+   *Mixes elements of Base and Lattice*
+	- Comes from the "grammar of graphics"
+	- Rigorous theoretical system
+	- A lot of "good" defaults
+	- More intuitive than lattice
+
+The three systems are not interchangeable.
+
+### Base plotting systems
+
+Packages:
+
+* `graphics`: `plot`, `hist`, `boxplot`, ...
+* `grDevices`: various graphics devices (X11, PDF, PostScript, PNG, ...)
+* `lattice`: code for producing Trellis graphics, functions like `xyplot`, `bwplot`, `levelplot`
+* `grid`: different system, lattice builds on top of it
+
+Two phases to create a base plot:
+* Initialize a new plot
+* Annotate an existing plot
+
+`plot()` is a generic function that evaluates the input you give, and defaults to a basic method with a lot of parameters (hint: `?par`).
+
+```{r}
+## Base histogram
+library(datasets)
+hist(airquality$Ozone)
+```
+
+```{r}
+## Base scatterplot
+library(datasets)
+with(airquality, plot(Wind, Ozone))
+```
+
+```{r}
+## Base boxplot
+library(datasets)
+airquality <- transform(airquality, Month = factor(Month))
+boxplot(Ozone ~ Month, airquality, xlab = "Month", ylab = "Ozone (ppb)")
+```
+
+#### Key parameters
+
+Some **key base graphics parameters**:
+* `pch`: plotting character (defaults is open circle)
+* `lty`: line type (default is solid line)
+* `lwd`: line width
+* `col`: plotting color (number, string, hex code, or `colors()`)
+* `xlab`, `ylab`: labels for the x/y axis
+
+`par()` can specify the **global graphics parameters** for the current session.
+* `las`: orientation of the axis labels
+* `bg`: background color
+* `mar`: margin size
+* `oma`: outer margin
+* `mfrow`, `mfcol`: number of plots per row and per column
+
+You can see the defaults for the global parameters with the `par` function:
+
+```{r}
+par("bg")
+# [1] "white"
+```
+
+#### Base plotting functions
+
+* `plot`: scatterplot
+* `lines`: *add* lines to a plot
+* `points`: *add* points to a plot
+* `text`: *add* labels
+* `title`: *add* annotations to x, y axis, title, subtitle, outer margin
+* `mtext`: *add* tex tot the margins
+* `azis`: *add* axix ticks/labels
+
+```{r}
+# Add a title
+library(datasets)
+with(airquality, plot(Wind, Ozone))
+title(main = "Ozone and Wind in New York City")
+```
+
+```{r}
+# Highlight a certain month
+with(airquality, plot(Wind, Ozone), main = "Ozone and Wind in New York City")
+with(subset(airquality, Month == 5), points(Wind, Ozone, col = "blue"))
+```
+
+```{r}
+with(airquality, plot(Wind, Ozone, main = "Ozone and Wind in New York City", type = "n"))
+# type = "n" just initializes the plot, so that I can then plot individual subsets one by one
+with(subset(airquality, Month == 5), points(Wind, Ozone, col = "blue"))
+with(subset(airquality, Month != 5), points(Wind, Ozone, col = "red"))
+legend("topright", pch = 1, col = c("blue", "red"), legend = c("May", "Other Months"))
+```
+
+```{r}
+with(airquality, plot(Wind, Ozone, main = "Ozone and Wind in New York City", pch = 20))
+model <- lm(Ozone ~ Wind, airquality) # Linear Regression
+abline(model, lwd = 2) # Add the linear regression line to the plot
+```
+
+```{r}
+# Multiple plots on a single device
+par(mfrow = c(1, 2))
+with(airquality, {
+	plot(Wind, Ozone, main = "Ozone and Wind")
+	plot(Solar.R, Ozone, main = "Ozone and Solar Radiation")
+})
+```
+
+```{r}
+par(mfrow = c(1, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0)) # Set margin and outer margin to allow space for the mtext()
+with(airquality, {
+	plot(Wind, Ozone, main = "Ozone and Wind")
+	plot(Solar.R, Ozone, main = "Ozone and Solar Radiation")
+	plot(Temp, Ozone, main = "Ozone and Temperature")
+	mtext("Ozone and Weather in New York City", outer = TRUE)
+})
+```
+
+
+
+
