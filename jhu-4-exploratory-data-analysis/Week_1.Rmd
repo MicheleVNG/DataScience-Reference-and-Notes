@@ -9,6 +9,12 @@
 		- [Two \(and more\) dimensions](#two-and-more-dimensions)
 		- [Summary](#summary)
 - [Lesson 2: Plotting](#lesson-2-plotting)
+	- [Plotting systems in R](#plotting-systems-in-r)
+	- [Base plotting systems](#base-plotting-systems)
+		- [Key parameters](#key-parameters)
+		- [Base plotting functions](#base-plotting-functions)
+- [Lesson 3: Graphics Devices](#lesson-3-graphics-devices)
+	- [File devices](#file-devices)
 
 <!-- /MarkdownTOC -->
 
@@ -293,6 +299,63 @@ with(airquality, {
 	mtext("Ozone and Weather in New York City", outer = TRUE)
 })
 ```
+
+## Lesson 3: Graphics Devices
+
+A **graphics device** is something where you can make a plot appear.
+
+* Window (screen device)
+* PDF, PNG, JPEG, SVG (file device)
+
+`?Devices`: list of graphic devices
+
+For exploratory analysis, the screen device is just fine. For other uses, the file devices can be useful (i.e. for sharing).
+
+Two approaches to plotting:
+
+1. Simple way: call plotting funcion, the plot appears, annotate it. Enjoy.
+2. Explicitly launch a graphic device, plot, explicitly close the graphics device with `dev.off()`
+
+```{r}
+pdf(file = "myplot.pdf") # PDF device
+with(faithful, plot(eruptions, waiting))
+title(main = "Old Faithful Geyser data")
+dev.off()
+```
+
+### File devices
+
+**Vector** formats:
+
+* `pdf`: useful for line-type graphics, not efficient with many objects/points
+* `svg`: supports animation and interactivity, potentially useful for web-based plots
+* `win.metafile`
+* `postscript`
+
+**Bitmap** formats:
+
+* `png`
+* `jpeg`
+* `tiff`
+* `bmp`
+
+You can use multiple graphics devices simultaneously, but plotting can occur on one graphics device at a time.  
+`dev.cur()` gets the current graphics device  
+`dev.set()` sets the active graphics device (corresponding to a certain integer value)
+
+Nice to know:
+
+* `dev.copy()`: copy a plot from one the active device to another (to a file)  
+* `dev.copy2pdf()`: copy directly to a PDF
+
+
+
+
+
+
+
+
+
 
 
 
