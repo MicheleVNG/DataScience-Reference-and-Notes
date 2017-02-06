@@ -3,18 +3,23 @@
 <!-- MarkdownTOC depth=3 -->
 
 - [Lesson 1: Hierarchical Clustering](#lesson-1-hierarchical-clustering)
-	- [Hierarchical clustering example](#hierarchical-clustering-example)
-	- [Prettier dendrogram](#prettier-dendrogram)
-	- [Measuring distance between clusters](#measuring-distance-between-clusters)
-	- [`heatmap\(\)`](#heatmap)
-	- [Notes](#notes)
+  - [Hierarchical clustering example](#hierarchical-clustering-example)
+  - [Prettier dendrogram](#prettier-dendrogram)
+  - [Measuring distance between clusters](#measuring-distance-between-clusters)
+  - [`heatmap\(\)`](#heatmap)
+  - [Notes](#notes)
 - [Lesson 2: K-Means Clustering & Dimension Reduction](#lesson-2-k-means-clustering--dimension-reduction)
-	- [K-Means Clustering](#k-means-clustering)
-		- [K-Means clustering example](#k-means-clustering-example)
-		- [Heatmaps](#heatmaps)
-		- [Summary](#summary)
-	- [Principal Component Analysis and Singular Value Decomposition](#principal-component-analysis-and-singular-value-decomposition)
+  - [K-Means Clustering](#k-means-clustering)
+    - [K-Means clustering example](#k-means-clustering-example)
+    - [Heatmaps](#heatmaps)
+    - [Summary](#summary)
+  - [Principal Component Analysis and Singular Value Decomposition](#principal-component-analysis-and-singular-value-decomposition)
 - [Lesson 3: Working with Color in R](#lesson-3-working-with-color-in-r)
+  - [`colorRamp`](#colorramp)
+  - [`colorRampPalette`](#colorramppalette)
+  - [Interesting palettes of color](#interesting-palettes-of-color)
+  - [`smoothScatter`](#smoothscatter)
+  - [`rgb`](#rgb)
 
 <!-- /MarkdownTOC -->
 
@@ -218,20 +223,108 @@ The goal of this technique is to identify the most important uncorrelated variab
 
 [...]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## Lesson 3: Working with Color in R
+
+Proper use of color can help describing the data.
+
+Default color schemes are bad. There are better ways to handle color.
+
+The `grDevices` package has 2 functions that help handling colors:
+
+* `colorRamp`: takes a palette of colors and returns a function that takes values between 0 and 1, indicating the extremes of the color palette.
+* `colorRampPalette`: takes a palette of colors and returns a function that takes integer arguments and returns a vector of colors interpolating the palette.
+
+Also, `colors()` lists the names of colors you can use in any plotting function.
+
+### `colorRamp`
+
+```{r}
+pal <- colorRamp(c("red", "blue"))
+
+pal(0)
+#      [,1] [,2] [,3]
+# [1,]  255    0    0
+
+pal(1)
+#      [,1] [,2] [,3]
+# [1,]    0    0  255
+
+pal(0.5)
+#       [,1] [,2]  [,3]
+# [1,] 127.5    0 127.5
+
+pal(seq(0, 1, len = 10))
+#            [,1] [,2]      [,3]
+#  [1,] 255.00000    0   0.00000
+#  [2,] 226.66667    0  28.33333
+#  [3,] 198.33333    0  56.66667
+#  [4,] 170.00000    0  85.00000
+#  [5,] 141.66667    0 113.33333
+#  [6,] 113.33333    0 141.66667
+#  [7,]  85.00000    0 170.00000
+#  [8,]  56.66667    0 198.33333
+#  [9,]  28.33333    0 226.66667
+# [10,]   0.00000    0 255.00000
+```
+
+### `colorRampPalette`
+
+```{r}
+pal <- colorRampPalette(c("red", "yellow"))
+
+pal(2)
+# [1] "#FF0000" "#FFFF00"
+
+pal(10)
+# [1] "#FF0000" "#FF1C00" "#FF3800" "#FF5500" "#FF7100"
+# [6] "#FF8D00" "#FFAA00" "#FFC600" "#FFE200" "#FFFF00"
+```
+
+### Interesting palettes of color
+
+The `RColorBrewer` package gives a set of interesting color palettes.
+
+There are three types of palettes:
+
+* **Sequential**: ordered, numerical data
+* **Diverging**: data that deviate from something (e.g. deviation from the mean, positive vs. negative, ...)
+* **Qualitative**: not ordered, typically categorical data
+
+```{r}
+library(RColorBrewer)
+
+cols <- brewer.pal(3, "BuGn")
+
+cols
+# [1] "#E5F5F9" "#99D8C9" "#2CA25F"
+
+pal <- colorRampPalette(cols)
+image(volcano, col = pal(20))
+```
+
+### `smoothScatter`
+
+```{r}
+x <- rnorm(10000)
+y <- rnorm(10000)
+
+smoothScatter(x, y)
+```
+
+### `rgb`
+
+The `rgb()` function creates any color via RGB proportions. Also, it can add transparency (*alpha*).
+
+```{r}
+x <- rnorm(1000)
+y <- rnorm(1000)
+
+plot(x, y, pch = 19)
+plot(x, y, pch = 19, col = rgb(0, 0, 0, 0.2))
+```
+
+
+
 
 
 
