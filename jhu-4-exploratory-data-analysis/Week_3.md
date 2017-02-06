@@ -9,6 +9,11 @@
 	- [`heatmap\(\)`](#heatmap)
 	- [Notes](#notes)
 - [Lesson 2: K-Means Clustering & Dimension Reduction](#lesson-2-k-means-clustering--dimension-reduction)
+	- [K-Means Clustering](#k-means-clustering)
+		- [K-Means clustering example](#k-means-clustering-example)
+		- [Heatmaps](#heatmaps)
+		- [Summary](#summary)
+	- [Principal Component Analysis and Singular Value Decomposition](#principal-component-analysis-and-singular-value-decomposition)
 - [Lesson 3: Working with Color in R](#lesson-3-working-with-color-in-r)
 
 <!-- /MarkdownTOC -->
@@ -129,15 +134,100 @@ The clustering picture may be unstable:
 
 Choosing where to cut isn't always obvious.
 
-
-
-
-
-
-
-
-
 ## Lesson 2: K-Means Clustering & Dimension Reduction
+
+### K-Means Clustering
+
+K-Means clustering is an old technique, but still useful to get a sense of high-dimensional data.
+
+Pick a distance metric as for the Hierarchical clustering approach.
+
+You need to have a sense of how many groups are in the dataset.
+
+You need:
+
+* a distance metric
+* a number of clusters
+* an initial guess as to cluster centroids
+
+You get:
+
+* final estimate of cluster centroids
+* an assignment of each point to clusters
+
+#### K-Means clustering example
+
+```{r}
+set.seed(1234)
+# par(mar = c(0,0,0,0))
+x <- rnorm(12, mean = rep(1:3, each = 4), sd = 0.2)
+y <- rnorm(12, mean = rep(c(1, 2, 1), each = 4), sd = 0.2)
+plot(x, y, col = "blue", pch = 19, cex = 2)
+text(x + 0.05, y + 0.05, labels = as.character(1:12))
+```
+
+K-Means clustering starts from a random set of centroids, then iteratively:
+
+1. Assigns each point to the nearest centroid
+2. Recalculates the new centroid location
+
+
+```{r}
+dataFrame <- data.frame(x, y)
+kmeansObj <- kmeans(dataFrame, centers = 3)
+names(kmeansObj)
+# returns a list of metadata for the k-means clustering result
+
+# par(mar = rep(0.2, 4))
+plot(x, y, col = kmeansObj$cluster, pch = 19, cex = 2)
+points(kmeansObj$centers, col = 1:3, pch = 3, cex = 3, lwd = 3)
+```
+
+#### Heatmaps
+
+```{r}
+set.seed(1234)
+dataMatrix <- as.matrix(dataFrame)[sample(1:12), ]
+kmeansObj2 <- kmeans(dataMatrix, centers = 3)
+par(mfrow = c(1, 2), mar = c(2, 4, 0.1, 0.1))
+image(t(dataMatrix)[, nrow(dataMatrix):1], yaxt = "n")
+image(t(dataMatrix)[, order(kmeansObj$cluster)], yaxt = "n")
+```
+
+#### Summary
+
+K-Means requires a number of clusters.
+
+K-Means is not deterministic, it's unstable depending on the number of iterations and starting points.
+
+### Principal Component Analysis and Singular Value Decomposition
+
+```{r}
+set.seed(12345)
+# par(mar = rep(0.2, 4))
+dataMatrix <- matrix(rnorm(400), nrow = 40)
+image(1:10, 1:40, t(dataMatrix)[, nrow(dataMatrix):1])
+
+# par(mar = rep(0.2, 4))
+heatmap(dataMatrix)
+```
+
+[...]
+
+The goal of this technique is to identify the most important uncorrelated variables that can explain as much variability in the dataset as possible.
+
+[...]
+
+
+
+
+
+
+
+
+
+
+
 
 
 
